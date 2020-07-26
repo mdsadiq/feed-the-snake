@@ -3,23 +3,22 @@
 
 export default {
   board: {
-    row: 5,
-    column: 5
+    row: 12,
+    column: 12
   },
   block: {
-    color: 'orange',
+    color: "orange",
     size: 2,
     location: [[1, 2], [2, 2]]
   },
   worm: {
-    color: 'darkgray',
+    color: "darkgray",
     size: 2,
     location: [[0, 1], [0, 2], [0, 3]]
   },
   food: {
-    color: 'blue',
-    location:[1,2]
+    color: "blue",
+    location: [1, 2]
   },
-  speed: null,
-
-}
+  speed: null
+};

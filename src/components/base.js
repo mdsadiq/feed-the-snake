@@ -3,12 +3,8 @@ import PropTypes from "prop-types";
 import config from "../config";
 
 class Base extends PureComponent {
-  // constructor(props) {
-  //   super(props);
-  // }
   render() {
     const { item } = this.props;
-
     return (
       <div
         className="base-block"

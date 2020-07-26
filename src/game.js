@@ -1,6 +1,9 @@
 import React, { Component, createRef } from "react";
+import PropTypes from "prop-types";
 import Board from "./components/board";
 import config from "./config";
+import { add2Dimension, genRandom } from "./utils/utils";
+import { MODES } from "./constants";
 
 const initWorm = config.worm.location;
 
@@ -10,24 +13,20 @@ class Game extends Component {
     this.gameBoard = createRef();
     this.refreshRate = null;
     this.state = {
-      row: 10,
-      column: 10,
+      row: config.board.row,
+      column: config.board.column,
       worm: initWorm.slice(),
       food: [],
       block: [],
       lastAction: "moveRight",
       dir: "right",
       speed: 600,
-      failReason: "",
-      mode: "dev"
+      failReason: ""
     };
   }
 
-  setGameMode = () => this.setState({ mode: "game" });
-  setDevMode = () => this.setState({ mode: "dev" });
-
   checkMode = () => {
-    if (this.state.mode !== "dev") this.gameBoard.current.focus();
+    if (this.props.mode === MODES.game) this.gameBoard.current.focus();
   };
   //check conditions of fail
   checkGameConditions = pos => {
@@ -39,7 +38,7 @@ class Game extends Component {
       this.stopGame();
     }
     //check if worm is hitting itself
-    const overlap = worm.filter(w => w[0] == pos[0] && w[1] == pos[1]);
+    const overlap = worm.filter(w => w[0] === pos[0] && w[1] === pos[1]);
     console.log("overlap->", overlap, this.refreshRate);
     if (overlap.length > 0) {
       this.setState({ failReason: "hit itself" });
@@ -90,10 +89,11 @@ class Game extends Component {
 
   componentDidMount() {
     this.resetFood();
+    this.checkMode();
   }
 
   componentWillUnmount() {
-    console.log('componentWillUnmount')
+    console.log("componentWillUnmount");
     this.stopGame();
   }
 
@@ -101,10 +101,10 @@ class Game extends Component {
     const { food, worm } = this.state;
     const firstPos = worm[worm.length - 1]; // remove the first element
     let computedPosition;
-    if (dir === "right") computedPosition = add2Dimenson(firstPos, 0, 1);
-    else if (dir === "left") computedPosition = add2Dimenson(firstPos, 0, -1);
-    else if (dir === "down") computedPosition = add2Dimenson(firstPos, 1, 0);
-    else computedPosition = add2Dimenson(firstPos, -1, 0);
+    if (dir === "right") computedPosition = add2Dimension(firstPos, 0, 1);
+    else if (dir === "left") computedPosition = add2Dimension(firstPos, 0, -1);
+    else if (dir === "down") computedPosition = add2Dimension(firstPos, 1, 0);
+    else computedPosition = add2Dimension(firstPos, -1, 0);
     this.checkGameConditions(computedPosition);
     console.log("move->", dir);
     if (!(computedPosition[0] === food[0] && computedPosition[1] === food[1])) {
@@ -128,22 +128,25 @@ class Game extends Component {
     }
     // this.move(this.state.worm);
   };
-  component;
+  // component;
   render() {
     const { row, column, worm, food, block, failReason } = this.state;
-
+    const { toggleMode } = this.props;
     return (
-      <div tabIndex="0" onKeyDown={this.handleKeyDown} ref={this.gameBoard}>
+      <div
+        className="game"
+        tabIndex="0"
+        onKeyDown={this.handleKeyDown}
+        ref={this.gameBoard}
+        style={{ paddingTop: "30x" }}
+      >
         <div>
           Score: {worm.length - 3} &nbsp;
           <b>{failReason}</b>
-          {/* <div> */}
-          <button onClick={() => this.stopGame()}>Stop</button>
-          <button onClick={() => this.startGame()}>Start</button>
-          <button onClick={() => this.restartGame()}>Restart</button>
-          {/* </div> */}
-          <button onClick={this.setGameMode}>Game mode</button>
-          <button onClick={this.setDevMode}>Dev mode</button>
+          <button onClick={this.stopGame}>Stop</button>
+          <button onClick={this.startGame}>Start</button>
+          <button onClick={this.restartGame}>Restart</button>
+          <button onClick={toggleMode}>Toggle mode</button>
         </div>
         <Board
           row={row}
@@ -157,12 +160,9 @@ class Game extends Component {
   }
 }
 
-export default Game;
-
-const add2Dimenson = (arr, addX = 0, addY = 0) => [
-  arr[0] + addX,
-  arr[1] + addY
-];
-const genRandom = max => {
-  return Math.floor(Math.random() * Math.floor(max));
+Game.propTypes = {
+  toggleMode: PropTypes.func.isRequired,
+  mode: PropTypes.string
 };
+
+export default Game;
