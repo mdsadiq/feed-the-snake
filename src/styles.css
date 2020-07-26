@@ -1,0 +1,45 @@
+body {
+  height: 100%;
+  overflow: hidden;
+}
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+h2 {
+  margin: 2px;
+}
+.base-block {
+  display: inline-block;
+  height: 2.8em;
+  width: 2.8em;
+  border: 0.2px solid #a8a8a9;
+  /* border-color: #a8a8a9 */
+}
+
+button {
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
+@media only screen and (max-width: 600px) {
+  .base-block {
+    display: inline-block;
+    height: 2.2em;
+    width: 2.2em;
+    border: 0.2px solid #a8a8a9;
+  }
+}
+
+@media only screen and (min-width: 200px) and (max-width: 459px) {
+  .base-block {
+    display: inline-block;
+    height: 1.8em;
+    width: 1.8em;
+    border: 0.2px solid #a8a8a9;
+  }
+}
+
+.board {
+  border: 1px solid black;
+}

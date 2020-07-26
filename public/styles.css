@@ -1,0 +1,13 @@
+body{
+  height: 100%;
+  overflow: hidden;
+}
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+
+.board{
+  border: 1px solid black;
+}
