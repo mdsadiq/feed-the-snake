@@ -10,9 +10,13 @@ h2 {
   margin: 2px;
 }
 .base-block {
+  border: 1px solid black;
   display: inline-block;
-  height: 2.8em;
-  width: 2.8em;
+  /* padding-top: 30px; */
+  /* height: 2.8em;
+  width: 2.8em; */
+  height: 2em;
+  width: 2em;
   border: 0.2px solid #a8a8a9;
   /* border-color: #a8a8a9 */
 }
@@ -25,21 +29,67 @@ button {
 @media only screen and (max-width: 600px) {
   .base-block {
     display: inline-block;
-    height: 2.2em;
-    width: 2.2em;
+    height: 1.8em;
+    width: 1.8em;
     border: 0.2px solid #a8a8a9;
+  }
+  .game {
+    width: 100%;
+    height: 100%;
+    padding-top: 35px;
   }
 }
 
 @media only screen and (min-width: 200px) and (max-width: 459px) {
   .base-block {
     display: inline-block;
-    height: 1.8em;
-    width: 1.8em;
+    height: 1.5em;
+    width: 1.5em;
     border: 0.2px solid #a8a8a9;
+  }
+  .game {
+    width: 100%;
+    border: 4px solid yellow;
+    height: 100vh;
+    /* margin-top: 30px; */
   }
 }
 
 .board {
   border: 1px solid black;
+}
+
+.header-info {
+  padding: 0px 10px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  background: papayawhip;
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  filter: opacity(95%);
+}
+
+.footer-info {
+  padding: 0px 10px;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: red;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-info .mode {
+  background-color: pink;
+  padding: 0px 10px;
+  border-radius: 3px;
+  filter: opacity(95%);
 }
