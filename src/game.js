@@ -117,6 +117,11 @@ class Game extends Component {
   };
 
   handleKeyDown = event => {
+    if (this.state.failReason !== "") {
+      this.restartGame();
+      return;
+    }
+
     this.stopGame();
     if (event.which === 39) {
       this.startGame("right");
@@ -135,26 +140,28 @@ class Game extends Component {
     const { toggleMode } = this.props;
     return (
       <div
-        className="game"
+        className="game-container"
         tabIndex="0"
         onKeyDown={this.handleKeyDown}
         ref={this.gameBoard}
       >
-        <div>
-          Score: {worm.length - 3} &nbsp;
-          <b>{failReason}</b>
-          <button onClick={this.stopGame}>Stop</button>
-          <button onClick={this.startGame}>Start</button>
-          <button onClick={this.restartGame}>Restart</button>
-          <button onClick={toggleMode}>Toggle mode</button>
+        <div className="game">
+          <div>
+            Score: {worm.length - 3} &nbsp;
+            <b>{failReason}</b>
+            <button onClick={this.stopGame}>Stop</button>
+            <button onClick={this.startGame}>Start</button>
+            <button onClick={this.restartGame}>Restart</button>
+            <button onClick={toggleMode}>Toggle mode</button>
+          </div>
+          <Board
+            row={row}
+            column={column}
+            worm={worm}
+            food={food}
+            block={block}
+          />
         </div>
-        <Board
-          row={row}
-          column={column}
-          worm={worm}
-          food={food}
-          block={block}
-        />
       </div>
     );
   }
