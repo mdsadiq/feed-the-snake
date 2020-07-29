@@ -36,8 +36,8 @@ class Board extends Component {
 }
 
 Board.propTypes = {
-  row: PropTypes.array.isRequired,
-  column: PropTypes.array.isRequired,
+  row: PropTypes.number.isRequired,
+  column: PropTypes.number.isRequired,
   worm: PropTypes.array.isRequired,
   food: PropTypes.array.isRequired,
   block: PropTypes.array.isRequired

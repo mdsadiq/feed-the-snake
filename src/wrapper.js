@@ -4,13 +4,13 @@ import { MODES } from "./constants";
 import { mobileCheck } from "./utils/utils";
 
 function Wrapper() {
-  const [mode, setMode] = useState(MODES.dev);
+  const [mode, setMode] = useState(MODES.game);
   const toggleMode = () => {
     mode === MODES.dev ? setMode(MODES.game) : setMode(MODES.dev);
   };
 
   return (
-    <div tabIndex="0" className="App" id="app">
+    <div className="App" id="app">
       {mobileCheck() && (
         <div className="mobile-error">
           Cannot play on mobile.
@@ -25,9 +25,7 @@ function Wrapper() {
         <h6>mdsadiq</h6>
       </div>
       {/* game */}
-      <div className="game-container">
-        <Game toggleMode={toggleMode} mode={mode} />
-      </div>
+      <Game toggleMode={toggleMode} mode={mode} />
       {/* footer */}
       <div className="footer-info">
         <div>
