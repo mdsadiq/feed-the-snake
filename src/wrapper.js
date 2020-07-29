@@ -4,7 +4,7 @@ import { MODES } from "./constants";
 import { mobileCheck } from "./utils/utils";
 
 function Wrapper() {
-  const [mode, setMode] = useState(MODES.dev);
+  const [mode, setMode] = useState(MODES.game);
   const toggleMode = () => {
     mode === MODES.dev ? setMode(MODES.game) : setMode(MODES.dev);
   };
