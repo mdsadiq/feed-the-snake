@@ -1,43 +1,29 @@
 body {
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
+  margin: 0px;
+  padding: 0px;
 }
 .App {
   font-family: sans-serif;
-  text-align: center;
+  height: calc(100vh - 30px);
+  /* margin-left: auto; */
+  /* display: flex;
+  flex-direction: column; */
 }
 h2 {
   margin: 2px;
 }
 .base-block {
-  border: 1px solid black;
   display: inline-block;
-  /* padding-top: 30px; */
-  /* height: 2.8em;
-  width: 2.8em; */
-  height: 2em;
-  width: 2em;
+  height: 1.8em;
+  width: 1.8em;
   border: 0.2px solid #a8a8a9;
-  /* border-color: #a8a8a9 */
 }
 
 button {
   font-size: 14px;
   padding: 2px 4px;
-}
-
-@media only screen and (max-width: 600px) {
-  .base-block {
-    display: inline-block;
-    height: 1.8em;
-    width: 1.8em;
-    border: 0.2px solid #a8a8a9;
-  }
-  .game {
-    width: 100%;
-    height: 100%;
-    padding-top: 35px;
-  }
 }
 
 @media only screen and (min-width: 200px) and (max-width: 459px) {
@@ -47,12 +33,24 @@ button {
     width: 1.5em;
     border: 0.2px solid #a8a8a9;
   }
-  .game {
-    width: 100%;
-    border: 4px solid yellow;
-    height: 100vh;
-    /* margin-top: 30px; */
+}
+
+@media only screen and (max-width: 600px) {
+  .base-block {
+    display: inline-block;
+    height: 1.8em;
+    width: 1.8em;
+    border: 0.2px solid #a8a8a9;
   }
+}
+
+.game-container {
+  height: calc(100vh - 75px);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .board {
@@ -61,7 +59,7 @@ button {
 
 .header-info {
   padding: 0px 10px;
-  position: fixed;
+  /* position: fixed; */
   top: 0px;
   left: 0px;
   right: 0px;
@@ -76,6 +74,7 @@ button {
 
 .footer-info {
   padding: 0px 10px;
+  z-index: 8;
   position: fixed;
   bottom: 0px;
   left: 0px;
@@ -89,7 +88,22 @@ button {
 }
 .footer-info .mode {
   background-color: pink;
+  margin: 0 5px;
   padding: 0px 10px;
   border-radius: 3px;
   filter: opacity(95%);
+}
+.mobile-error {
+  height: 100vh;
+  /* position: relative is added as fixed will not respect zindex */
+  position: relative;
+  /* position: relative is added as fixed will not respect zindex */
+  z-index: 100;
+  background: lightsalmon;
+  color: #ffffee;
+  font-size: x-large;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }

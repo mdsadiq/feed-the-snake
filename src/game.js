@@ -25,9 +25,6 @@ class Game extends Component {
     };
   }
 
-  checkMode = () => {
-    if (this.props.mode === MODES.game) this.gameBoard.current.focus();
-  };
   //check conditions of fail
   checkGameConditions = pos => {
     const { row, column, worm } = this.state;
@@ -87,8 +84,12 @@ class Game extends Component {
     setTimeout(this.startGame, 800);
   };
 
+  checkMode = () => {
+    if (this.props.mode === MODES.game) this.gameBoard.current.focus();
+  };
   componentDidMount() {
     this.resetFood();
+    // this.props.mode === MODES.game ? this.gameBoard.current.focus() : null
     this.checkMode();
   }
 
@@ -138,7 +139,6 @@ class Game extends Component {
         tabIndex="0"
         onKeyDown={this.handleKeyDown}
         ref={this.gameBoard}
-        style={{ paddingTop: "30x" }}
       >
         <div>
           Score: {worm.length - 3} &nbsp;

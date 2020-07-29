@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import Base from "./base";
-import config from "../config";
 
 class Board extends Component {
   renderBoard = (row = 5, column = 5, worm, food, block) => {
@@ -36,6 +35,12 @@ class Board extends Component {
   }
 }
 
-export default Board;
+Board.propTypes = {
+  row: PropTypes.array.isRequired,
+  column: PropTypes.array.isRequired,
+  worm: PropTypes.array.isRequired,
+  food: PropTypes.array.isRequired,
+  block: PropTypes.array.isRequired
+};
 
-// className="board"
+export default Board;
