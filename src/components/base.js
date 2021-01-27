@@ -1,13 +1,19 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import config from "../config";
+import { MODES } from "../constants";
 
 class Base extends PureComponent {
   render() {
-    const { item } = this.props;
+    const { item, mode } = this.props;
+    let className = "base-block";
+    if (mode === MODES.dev) {
+      className += " dev";
+      console.log("base -> ", mode);
+    }
     return (
       <div
-        className="base-block"
+        className={className}
         style={{
           backgroundColor: item ? config[item].color : "lightgray"
         }}
@@ -19,7 +25,8 @@ class Base extends PureComponent {
 export default Base;
 
 Base.propTypes = {
-  item: PropTypes.oneOf(["block", "food", "worm"])
+  item: PropTypes.oneOf(["block", "food", "worm"]),
+  mode: PropTypes.string
 };
 
 // display: 'inline-block',
