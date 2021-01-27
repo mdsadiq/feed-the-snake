@@ -9,6 +9,11 @@ function Wrapper() {
     mode === MODES.dev ? setMode(MODES.game) : setMode(MODES.dev);
   };
 
+  const forceClear = function() {
+    for(var i =0; i < 500; i++){
+      window.clearInterval(i);
+    }
+  }
   return (
     <div className="App" id="app">
       {mobileCheck() && (
@@ -32,6 +37,9 @@ function Wrapper() {
           Mode:
           <button className="mode" onClick={toggleMode}>
             {mode}
+          </button>
+          <button className="btn" onClick={forceClear}>
+            Force Clear
           </button>
         </div>
       </div>

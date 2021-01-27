@@ -28,7 +28,7 @@ class Game extends Component {
   //check conditions of fail
   checkGameConditions = pos => {
     const { row, column, worm } = this.state;
-    console.log("pos->", pos, worm);
+    // console.log("pos->", pos, worm);
     //check the wall
     if (pos[0] < 0 || pos[0] > row - 1 || pos[1] < 0 || pos[1] > column - 1) {
       this.setState({ failReason: "hit the wall" });
@@ -36,7 +36,7 @@ class Game extends Component {
     }
     //check if worm is hitting itself
     const overlap = worm.filter(w => w[0] === pos[0] && w[1] === pos[1]);
-    console.log("overlap->", overlap, this.refreshRate);
+    // console.log("overlap->", overlap, this.refreshRate);
     if (overlap.length > 0) {
       this.setState({ failReason: "hit itself" });
 
@@ -94,7 +94,7 @@ class Game extends Component {
   }
 
   componentWillUnmount() {
-    console.log("componentWillUnmount");
+    // console.log("componentWillUnmount");
     this.stopGame();
   }
 
@@ -107,7 +107,7 @@ class Game extends Component {
     else if (dir === "down") computedPosition = add2Dimension(firstPos, 1, 0);
     else computedPosition = add2Dimension(firstPos, -1, 0);
     this.checkGameConditions(computedPosition);
-    console.log("move->", dir);
+    // console.log("move->", dir);
     if (!(computedPosition[0] === food[0] && computedPosition[1] === food[1])) {
       worm.shift(); //remove last element
     } else this.resetFood(); // generate new food
