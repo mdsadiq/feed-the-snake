@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import Board from "./components/board";
 import Board from "./Board";
 import { FoodContext } from "./context";
 
@@ -13,7 +12,6 @@ function Game({ mode, toggleMode }) {
   const startGame = () => {};
   const stopGame = () => {};
   const restartGame = () => {};
-  // const stopGame = () => {};
 
   return (
     <div

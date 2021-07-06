@@ -6,7 +6,9 @@ const Board = ({ row, col }) => {
   const [boardunits, setBoardunits] = useState([]);
   const [food, setFood] = useContext(FoodContext);
   const boardSize = row * col;
-  const [snake, useSnake] = useState([{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" }]);
+  const [action, setAction] = useState('');
+  const def = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" }]
+  const [snake, setSnake] = useState(def);
 
   useEffect(() => {
     const boardList = [];
@@ -18,18 +20,61 @@ const Board = ({ row, col }) => {
     setBoardunits(boardList);
     return () => {};
   }, [""]);
+  
+  const pressedKey = {
+    "ArrowRight": (pos)=> { 
+        const next = parseInt(pos[1], 10) + 1;
+        return `${pos[0]}_${next}`
+    },
+    "ArrowLeft": (pos)=> { 
+      const next = parseInt(pos[1], 10) - 1;
+      return `${pos[0]}_${next}`
+    },
+    "ArrowUp": (pos)=> { 
+      const next = parseInt(pos[0], 10) - 1;
+      return `${next}_${pos[1]}`
+    },
+    "ArrowDown": (pos)=> { 
+      const next = parseInt(pos[0], 10) + 1;
+      return `${next}_${pos[1]}`
+    }
+    
+  }
+  
+  // movement effect
+  useEffect(() => {  
+    const currentPos = snake[snake.length-1].loc.split("_")
+    const calculateNewCoordinate = pressedKey[action.key];
+    if(!calculateNewCoordinate){ return null }
+    const newCoordinate = calculateNewCoordinate(currentPos);
+    const newSnake = [ ...snake ]
+    newSnake.push({loc: newCoordinate });
+    newSnake.shift();
+    console.log(JSON.stringify(snake), JSON.stringify(newSnake));
+    setSnake(newSnake);
+  },[action])
+
+ 
+  useEffect((e) => {
+    const handleKeyPress = (e) => { 
+      setAction({ key: e.key, id: Math.random() })
+    };
+    window.addEventListener('keydown', handleKeyPress)
+    // return () => {
+    //   {};
+    // }
+  }, [])
 
   return (
     <div className="board">
       {boardunits.map((box) => {
         let unitType = "empty";
-        console.log(box.loc, food)
         if (box.loc === `${food.row}_${food.col}`) {
           unitType = "food";
         } else if (isSnake(box, snake)) {
           unitType = "snake";
         }
-        return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row}/>;
+        return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row} data-row={row} data-col={col}/>;
       })}
     </div>
   );
@@ -44,7 +89,7 @@ const Base = ({ unitType, val, maxRow }) => {
   };
   return (
     <>
-      <div className={`base-block ${units[unitType]}`}></div>
+      <div className={`base-block ${units[unitType]}`} style={{ fontSize: 8 }}></div>
       {val.split('_')[1] === maxRow-1 + '' ? <br /> : null}
     </>
   );
