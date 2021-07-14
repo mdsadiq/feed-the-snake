@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Board from "./Board";
-import { FoodContext } from "./context";
+import { FoodContext, SnakeContext } from "./context";
 
 function Game({ mode, toggleMode }) {
-  const [worm, setWorm] = useState([]);
+  const babySnake = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" },{ loc: "0_3" },{ loc: "0_4" },{ loc: "0_5" }]
+  const [snake, setSnake] = useState(babySnake);
   const [size, setSize] = useState({ row: 12, col: 12 });
   const [food, setFood] = useState({ row: 2, col: 3 });
 
@@ -21,10 +22,9 @@ function Game({ mode, toggleMode }) {
       // ref={this.gameBoard}
     >
       <div className="game-heading">
-        Score :{worm.length - 3}
+        Score :{snake.length - 6}
         <span className="game-notif">
-          {" "}
-          <b>Hit the wall</b>{" "}
+          <b>Hit the wall</b>
         </span>
       </div>
 
@@ -36,7 +36,9 @@ function Game({ mode, toggleMode }) {
           <button onClick={toggleMode}>Toggle mode</button>
         </div>
         <FoodContext.Provider value={[ food, setFood ]} >
-          <Board row={row} col={col} />
+          <SnakeContext.Provider value={[snake, setSnake]}>
+            <Board row={row} col={col} />
+          </SnakeContext.Provider>
         </FoodContext.Provider>
         {/* <Board
             row={row}

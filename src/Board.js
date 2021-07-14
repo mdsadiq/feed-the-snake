@@ -1,9 +1,11 @@
-import { useContext, useEffect, useMemo, useState } from "react";
-import { FoodContext } from "./context";
+import { useContext, useEffect, useState, useRef, useCallback } from "react";
+import { FoodContext, SnakeContext } from "./context";
 
-const isSnake = (pos, snake) => snake.some((sPos) => sPos.loc === pos.loc);
+const getSnakeLoc = (pos, snake) => snake.findIndex((sPos) => sPos.loc === pos.loc);
 const Board = ({ row, col }) => {
-  
+  const [ canPlay, setCanPlay ] = useState(false);
+  const activePointRef = useRef(canPlay);
+
   const createBoard = () => {
     const boardList = [];
     for (let r = 0; r < row; r++) {
@@ -15,10 +17,11 @@ const Board = ({ row, col }) => {
   }
   const [boardunits, setBoardunits] = useState(createBoard);
   const [food, setFood] = useContext(FoodContext);
+  const [snake, setSnake] = useContext(SnakeContext);
   const boardSize = row * col;
   const [action, setAction] = useState('');
-  const def = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" }]
-  const [snake, setSnake] = useState(def);
+  // const def = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" },{ loc: "0_3" },{ loc: "0_4" },{ loc: "0_5" }]
+  // const [snake, setSnake] = useState(def);
   const [log, setLog] = useState([])
   // useEffect(() => {
   //   const boardList = [];
@@ -65,34 +68,71 @@ const Board = ({ row, col }) => {
     const calculateNewCoordinate = pressedKey[action.key];
     if(!calculateNewCoordinate){ return null }
     const newCoordinate = calculateNewCoordinate(currentPos);
-    const newSnake = [ ...snake ]
-    newSnake.push({loc: newCoordinate });
-    
-    console.log(newSnake)
-    const head = newSnake[newSnake.length-1].loc.split("_").map(l => parseInt(l,10))
-    const didSnakeEatFood = head[0] === food.row && head[1] === food.col ? true : false;
-    if(didSnakeEatFood){ 
-      const newFood = { row: Math.round(Math.random()*row-1), col: Math.round(Math.random()*col-1) }
-      setFood(newFood)
-      setLog(log => [  ...log, newFood ])
-    }else{
-      newSnake.shift();  
+    const isNextMoveWrong = snake.findIndex(pos => pos.loc === newCoordinate) > -1
+    const didItHitWall = () => { 
+      const newCoordinateArray = newCoordinate.split('_')
+      const rr = parseInt(newCoordinateArray[0], 10)
+      const cc = parseInt(newCoordinateArray[1], 10)
+      if(rr < 0 || rr > row-1 || cc < 0 || cc > col-1) return true;
+      return false;
     }
-    console.log(JSON.stringify(snake), JSON.stringify(newSnake), JSON.stringify(food));
-    setSnake(newSnake);
+    if(isNextMoveWrong) {
+      console.log('ate it self', newCoordinate, snake)
+      setCanPlay(false);
+    }
+    else if(didItHitWall()) {
+      console.log('Hit wall', newCoordinate, snake)
+      setCanPlay(false);
+    } else {
+      const newSnake = [ ...snake ]
+      newSnake.push({loc: newCoordinate });
+      
+      console.log(newSnake)
+      const head = newSnake[newSnake.length-1].loc.split("_").map(l => parseInt(l,10))
+      const didSnakeEatFood = head[0] === food.row && head[1] === food.col ? true : false;
+      if(didSnakeEatFood){ 
+        const newCol = Math.round(Math.random()*col-1);
+        const newRow = Math.round(Math.random()*row-1);
+        const newFood = { 
+          row: newRow === -1 ? 0 : newRow,
+          col:  newCol === -1 ? 0 : newCol
+        }
+        setFood(newFood)
+        setLog(log => [  ...log, newFood ])
+      }else{
+        newSnake.shift();  
+      }
+      console.log(JSON.stringify(food));
+      setSnake(newSnake);
+  }
     // setFood({ row: 5, col: 1 })
   },[action])
 
-  const handleKeyPress = (e) => { 
-    setAction({ key: e.key, id: Math.random() })
-  };
-  
-  useEffect((e) => {
+  // const _setCanPlay = x => {
+  //   activePointRef.current = x; // keep updated
+  //   setCanPlay(x);
+  // };
+
+  const handleKeyPress = useCallback((e) => {  
+  // const handleKeyPress = (e) => { 
+    console.log(e.code, {canPlay}, {action}, { 'activePointRefCurrent' : activePointRef.current })
+    if(e.code === "Space"){
+      console.log(e.code, 'set true')
+      // _setCanPlay(true)
+      setCanPlay((state) => true);
+    }else if(canPlay) {
+      console.log(e.code, 'setting actuon', canPlay, action)
+
+      setAction({ key: e.key, id: Math.random() })
+    }
+  },[ canPlay, action])
+  // };
+  useEffect((e) => {    
     window.addEventListener('keydown', handleKeyPress)
     return () => {
       window.removeEventListener('keydown', handleKeyPress)
     }
-  }, [])
+  }, [handleKeyPress])
   // const renderBoard = function() {
   //   return boardunits.map((box) => {
   //     let unitType = "empty";
@@ -108,13 +148,15 @@ const Board = ({ row, col }) => {
   return (
     <div className="board">
       {boardunits.map((box) => {
-        let unitType = "empty";
+        let unitType = "empty", snakeLoc;
         if (box.loc === `${food.row}_${food.col}`) {
           unitType = "food";
-        } else if (isSnake(box, snake)) {
-          unitType = "snake";
+        } else {
+          snakeLoc = getSnakeLoc(box, snake)
+          if (snakeLoc > -1) unitType = "snake";
         }
-        return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row} data-row={row} data-col={col}/>;
+        
+        return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row} data-row={row} data-col={col} isHead={snakeLoc === snake.length-1}/>;
       })}
       <div style={{ position: "absolute",background:"wheat", right: 0, bottom: 0, height: 100, overflowY: "scroll"}}>{JSON.stringify(log, null,2) }</div>
     </div>
@@ -122,7 +164,7 @@ const Board = ({ row, col }) => {
 };
 export default Board;
 
-const Base = ({ unitType, val, maxRow }) => {
+const Base = ({ unitType, val, maxRow, isHead }) => {
   const units = {
     food: "food",
     snake: "snake",
@@ -130,7 +172,7 @@ const Base = ({ unitType, val, maxRow }) => {
   };
   return (
     <>
-      <div className={`base-block ${units[unitType]}`} style={{ fontSize: 8 }}></div>
+      <div className={`base-block ${units[unitType]}`} style={{ fontSize: 8, background: isHead ? 'palegreen' : '' }}></div>
       {val.split('_')[1] === maxRow-1 + '' ? <br /> : null}
     </>
   );
