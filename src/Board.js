@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, useRef, useCallback } from "react";
 import { FoodContext, SnakeContext } from "./context";
+import { genRandom } from "./utils/utils";
 
 const getSnakeLoc = (pos, snake) => snake.findIndex((sPos) => sPos.loc === pos.loc);
 const Board = ({ row, col }) => {
@@ -61,15 +62,23 @@ const Board = ({ row, col }) => {
     }
     
   }
+  const generateFood = () => {
+    let newFood = { 
+      row: genRandom(row),
+      col: genRandom(col)
+    }
+    if(getSnakeLoc({ loc: `${newFood.row}_${newFood.col}` }, snake) > -1) return generateFood()
+    else return newFood;
+  }
   
   // movement effect
-  useEffect(() => {  
+  useEffect(() => {
     const currentPos = snake[snake.length-1].loc.split("_")
     const calculateNewCoordinate = pressedKey[action.key];
     if(!calculateNewCoordinate){ return null }
     const newCoordinate = calculateNewCoordinate(currentPos);
     const isNextMoveWrong = snake.findIndex(pos => pos.loc === newCoordinate) > -1
-    const didItHitWall = () => { 
+    const didItHitWall = () => {
       const newCoordinateArray = newCoordinate.split('_')
       const rr = parseInt(newCoordinateArray[0], 10)
       const cc = parseInt(newCoordinateArray[1], 10)
@@ -86,35 +95,21 @@ const Board = ({ row, col }) => {
     } else {
       const newSnake = [ ...snake ]
       newSnake.push({loc: newCoordinate });
-      
-      console.log(newSnake)
       const head = newSnake[newSnake.length-1].loc.split("_").map(l => parseInt(l,10))
       const didSnakeEatFood = head[0] === food.row && head[1] === food.col ? true : false;
       if(didSnakeEatFood){ 
-        const newCol = Math.round(Math.random()*col-1);
-        const newRow = Math.round(Math.random()*row-1);
-        const newFood = { 
-          row: newRow === -1 ? 0 : newRow,
-          col:  newCol === -1 ? 0 : newCol
-        }
+        const newFood = generateFood()
         setFood(newFood)
         setLog(log => [  ...log, newFood ])
-      }else{
+      } else {
         newSnake.shift();  
       }
       console.log(JSON.stringify(food));
       setSnake(newSnake);
-  }
-    // setFood({ row: 5, col: 1 })
+    }
   },[action])
 
-  // const _setCanPlay = x => {
-  //   activePointRef.current = x; // keep updated
-  //   setCanPlay(x);
-  // };
-
   const handleKeyPress = useCallback((e) => {  
-  // const handleKeyPress = (e) => { 
     console.log(e.code, {canPlay}, {action}, { 'activePointRefCurrent' : activePointRef.current })
     if(e.code === "Space"){
       console.log(e.code, 'set true')
@@ -126,25 +121,14 @@ const Board = ({ row, col }) => {
       setAction({ key: e.key, id: Math.random() })
     }
   },[ canPlay, action])
-  // };
+
   useEffect((e) => {    
     window.addEventListener('keydown', handleKeyPress)
     return () => {
       window.removeEventListener('keydown', handleKeyPress)
     }
   }, [handleKeyPress])
-  // const renderBoard = function() {
-  //   return boardunits.map((box) => {
-  //     let unitType = "empty";
-  //     if (box.loc === `${food.row}_${food.col}`) {
-  //       unitType = "food";
-  //     } else if (isSnake(box, snake)) {
-  //       unitType = "snake";
-  //     }
-  //     return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row} data-row={row} data-col={col}/>;
-  //   })
-  // }
-  // const memoizedBoard = useMemo(renderBoard, boardunits)
+
   return (
     <div className="board">
       {boardunits.map((box) => {
@@ -155,7 +139,7 @@ const Board = ({ row, col }) => {
           snakeLoc = getSnakeLoc(box, snake)
           if (snakeLoc > -1) unitType = "snake";
         }
-        
+
         return <Base key={box.loc} unitType={unitType} val={box.loc} maxRow={row} data-row={row} data-col={col} isHead={snakeLoc === snake.length-1}/>;
       })}
       <div style={{ position: "absolute",background:"wheat", right: 0, bottom: 0, height: 100, overflowY: "scroll"}}>{JSON.stringify(log, null,2) }</div>
