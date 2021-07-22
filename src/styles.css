@@ -66,7 +66,7 @@ button {
   font-size: 1.4em;
 }
 .game-notif {
-  font-size: 1.1em;
+  font-size: .91em;
 }
 
 .board {
@@ -145,6 +145,15 @@ button {
   width: 100%;
   content: "";
   border-radius: 50%;
+  animation-name: foodAnimation;
+  animation-duration: 2s;
+  animation-direction:alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes foodAnimation {
+  from {scale: .8;}
+  to {scale: 2;}
 }
 .snake {
   background: rgb(72,180,143);

@@ -22,18 +22,18 @@ function Game({ mode, toggleMode }) {
       // ref={this.gameBoard}
     >
       <div className="game-heading">
-        Score :{snake.length - 6}
         <span className="game-notif">
-          <b>Hit the wall</b>
+          <b>Press "Space" to start and stop the Snake</b>
         </span>
       </div>
 
       <div className="game">
-        <div>
+        <div style={{ display: 'flex' }}>
           <button onClick={stopGame}>Stop</button>
           <button onClick={startGame}>Start</button>
           <button onClick={restartGame}>Restart</button>
           <button onClick={toggleMode}>Toggle mode</button>
+          <span style={{ fontSize: '1.2em', alignSelf: 'center', marginLeft: 'auto' }}>Score :{snake.length - 6}</span>
         </div>
         <FoodContext.Provider value={[ food, setFood ]} >
           <SnakeContext.Provider value={[snake, setSnake]}>
