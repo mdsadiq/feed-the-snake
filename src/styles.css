@@ -22,10 +22,11 @@ h2 {
 }
 .base-block {
   display: inline-block;
-  height: 2rem;
-  width: 2rem;
-  margin: .2rem;
+  height: 1.6rem;
+  width: 1.6rem;
+  margin: .16rem;
   border-radius: 0.2rem;
+  margin-bottom: 0px;
   /* border: 0.2px solid #a8a8a9; */
 }
 

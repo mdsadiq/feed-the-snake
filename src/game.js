@@ -5,14 +5,14 @@ import { FoodContext, SnakeContext } from "./context";
 function Game({ mode, toggleMode }) {
   const babySnake = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" },{ loc: "0_3" },{ loc: "0_4" },{ loc: "0_5" }]
   const [snake, setSnake] = useState(babySnake);
-  const [size, setSize] = useState({ row: 12, col: 12 });
+  const [size, setSize] = useState({ row: 16, col: 16 });
   const [food, setFood] = useState({ row: 2, col: 3 });
 
   const { row, col } = size;
 
   const startGame = () => {};
   const stopGame = () => {};
-  const restartGame = () => {};
+  const restartGame = (callback) => { callback() };
 
   return (
     <div
@@ -33,7 +33,7 @@ function Game({ mode, toggleMode }) {
           <button onClick={startGame}>Start</button>
           <button onClick={restartGame}>Restart</button>
           <button onClick={toggleMode}>Toggle mode</button>
-          <span style={{ fontSize: '1.2em', alignSelf: 'center', marginLeft: 'auto' }}>Score :{snake.length - 6}</span>
+          <span style={{ fontSize: '1.2em', alignSelf: 'center', marginLeft: 'auto' }}>score :<span>{snake.length - 6}</span></span>
         </div>
         <FoodContext.Provider value={[ food, setFood ]} >
           <SnakeContext.Provider value={[snake, setSnake]}>

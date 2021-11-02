@@ -1,11 +1,13 @@
-import { useContext, useEffect, useState, useRef, useCallback } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { FoodContext, SnakeContext } from "./context";
+import useMover from "./useMover";
 import { genRandom } from "./utils/utils";
 
 const getSnakeLoc = (pos, snake) => snake.findIndex((sPos) => sPos.loc === pos.loc);
 const Board = ({ row, col }) => {
-  const [ canPlay, setCanPlay ] = useState(false);
-  const activePointRef = useRef(canPlay);
+  const [ canPlay, setCanPlay ] = useState(true);
+  const [ direction, setDirection ] = useState('ArrowRight');
+  // const activePointRef = useRef(canPlay);
 
   const createBoard = () => {
     const boardList = [];
@@ -19,30 +21,10 @@ const Board = ({ row, col }) => {
   const [boardunits, setBoardunits] = useState(createBoard);
   const [food, setFood] = useContext(FoodContext);
   const [snake, setSnake] = useContext(SnakeContext);
-  const boardSize = row * col;
+
   const [action, setAction] = useState('');
-  // const def = [{ loc: "0_0" },{ loc: "0_1" },{ loc: "0_2" },{ loc: "0_3" },{ loc: "0_4" },{ loc: "0_5" }]
-  // const [snake, setSnake] = useState(def);
   const [log, setLog] = useState([])
-  // useEffect(() => {
-  //   const boardList = [];
-  //   for (let r = 0; r < row; r++) {
-  //     for (let c = 0; c < col; c++) {
-  //       boardList.push({ loc: `${r}_${c}`, unitType: "" });
-  //     }
-  //   }
-  //   setBoardunits(boardList);
-  // //   // return () => {};
-  // }, [""]);
-  // const boardunits = useMemo(() => {
-  //   const boardList = [];
-  //   for (let r = 0; r < row; r++) {
-  //     for (let c = 0; c < col; c++) {
-  //       boardList.push({ loc: `${r}_${c}`, unitType: "" });
-  //     }
-  //   }
-  // }, [row, col])
-  
+
   const pressedKey = {
     "ArrowRight": (pos)=> { 
         const next = parseInt(pos[1], 10) + 1;
@@ -74,7 +56,7 @@ const Board = ({ row, col }) => {
   // movement effect
   useEffect(() => {
     const currentPos = snake[snake.length-1].loc.split("_")
-    const calculateNewCoordinate = pressedKey[action.key];
+    const calculateNewCoordinate = pressedKey[action.code];
     if(!calculateNewCoordinate){ return null }
     const newCoordinate = calculateNewCoordinate(currentPos);
     const isNextMoveWrong = snake.findIndex(pos => pos.loc === newCoordinate) > -1
@@ -110,24 +92,38 @@ const Board = ({ row, col }) => {
   },[action])
 
   const handleKeyPress = useCallback((e) => {  
-    console.log(e.code, {canPlay}, {action}, { 'activePointRefCurrent' : activePointRef.current })
+    console.log(e.code, {canPlay}, action)
     if(e.code === "Space"){
-      console.log(e.code, 'set true')
-      // _setCanPlay(true)
-      setCanPlay((state) => true);
+      setCanPlay(true);
     }else if(canPlay) {
-      console.log(e.code, 'setting actuon', canPlay, action)
-
-      setAction({ key: e.key, id: Math.random() })
+      if(["ArrowRight","ArrowLeft","ArrowUp","ArrowDown"].includes(e.code)){
+        // console.log(e.code, 'setting actuon', canPlay, action)
+        setAction({ code: e.code, id: Math.random() })
+        // setDirection(e.code);
+      } else {
+        // setAction({ code: direction, id: Math.random() })
+      }
     }
-  },[ canPlay, action])
+  },[ canPlay, direction ])
 
-  useEffect((e) => {    
-    window.addEventListener('keydown', handleKeyPress)
+  // const handleDirection = useCallback((e) => {  
+  //     setDirection(e.code);
+  // },[ canPlay ])
+
+  // const sd = useCallback((e) => setDirection(e.code), []);
+  const sd = (e) => setDirection(e.code) 
+  useEffect(() => {    
+    console.log('detected change, redeploying set direction ')
+    window.addEventListener('keydown', sd);
     return () => {
-      window.removeEventListener('keydown', handleKeyPress)
+      window.removeEventListener('keydown', sd);
     }
-  }, [handleKeyPress])
+  }, [sd])
+
+  useMover(()=> {
+    // const customEvent = { code: direction || 'ArrowRight' }
+    handleKeyPress({ code: direction })
+  }, canPlay ? 400 : null);
 
   return (
     <div className="board">
@@ -156,7 +152,7 @@ const Base = ({ unitType, val, maxRow, isHead }) => {
   };
   return (
     <>
-      <div className={`base-block ${units[unitType]}`} style={{ fontSize: 8, background: isHead ? 'palegreen' : '' }}></div>
+      <div className={`base-block ${units[unitType]}`} style={{ background: isHead ? 'palegreen' : '' }}></div>
       {val.split('_')[1] === maxRow-1 + '' ? <br /> : null}
     </>
   );
