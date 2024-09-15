@@ -15,7 +15,7 @@ function Wrapper() {
     }
   }
   return (
-    <div className="App" id="app">
+    <div className="app" id="app">
       {mobileCheck() && (
         <div className="mobile-error">
           Cannot play on mobile.
